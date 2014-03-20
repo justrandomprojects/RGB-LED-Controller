@@ -1,6 +1,5 @@
-
 /*  
- * RGB LED Driver Project (aka Bedroom Mood Lighting
+ * RGB LED Driver Project (aka Bedroom Mood Lighting)
  * -------------------------------------------------------------------
  * Original Code from JustRandomProjects.wordpress.com
  * Please credit if this code is used elsewhere, thanks!
