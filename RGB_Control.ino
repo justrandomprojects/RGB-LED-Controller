@@ -17,11 +17,13 @@
  */
 
 //define the pin numbers to be constant
-const int r = 6;       //pin connected to RED anode
-const int g = 5;       //pin connected to GREEN anode
-const int b = 3;       //pin connected to BLUE anode
-const int x = 10;      //pin connected to Cathode X
-const int y = 11;      //pin connected to Cathode Y
+const int v = 13;      //testing purposes only
+const int r = 3;       //pin connected to RED anode
+const int g = 6;       //pin connected to GREEN anode
+const int b = 5;       //pin connected to BLUE anode
+const int w = 4;       //pin connected to Acknowledgement LED
+const int x = 7;       //pin connected to Cathode X
+const int y = 8;       //pin connected to Cathode Y
 const int z = 2;       //pin connected to Mode Button
 const int rPot = A0;   //pin connected to Red Potentiometer (10kR)
 const int gPot = A2;   //pin connected to Green Potentiometer (10kR)
@@ -37,7 +39,7 @@ byte currentMode = 1;  //value for mode holder
 
 boolean countPress = false;    //flag for counting presses
 long durCountPress = 1500;     //1500ms max between presses
-long durDeBounce = 50;         //50ms deBounce
+long durDeBounce = 150;         //50ms deBounce
 long lastPress = 0;            //calculator for last press time
 byte presses = 0;              //how many presses?
 
@@ -59,6 +61,8 @@ void setup () {
   pinMode(r, OUTPUT);
   pinMode(g, OUTPUT);
   pinMode(b, OUTPUT);
+  pinMode(v, OUTPUT);
+  pinMode(w, OUTPUT);
   pinMode(x, OUTPUT);
   pinMode(y, OUTPUT);
 
@@ -75,7 +79,7 @@ void setup () {
   testFunction();
   
   //attach the button routine to the interrupt pin
-  attachInterrupt (0, buttonPressed, RISING);
+  attachInterrupt (0, buttonPressed, LOW);
 }
 
 void loop () {
@@ -107,8 +111,8 @@ void testFunction() {
   //this function will cycle test all the LEDs
   //taking approximately 5 seconds
   //using arrays to handle the variables means less lines!
-  int anodes[3] = {
-    b, g, r  
+  int anodes[4] = {
+    b, g, r, w  
   };
   int cathodes[2] = {
     x, y
@@ -120,7 +124,7 @@ void testFunction() {
   digitalWrite (r, LOW);
   digitalWrite (g, LOW);
   digitalWrite (b, LOW);
-  for (int inner = 0; inner <= 2; inner++) {
+  for (int inner = 0; inner <= 3 ; inner++) {
     for (int outer = 0; outer <= 1; outer++) {
       //set HIGH the testing LEDs
       digitalWrite (cathodes[outer], HIGH);
@@ -135,32 +139,28 @@ void testFunction() {
 }
 
 void flashAck(byte nFlash) {
-  //function to use the LEDs to acknowledge the user's choice in mode
-  //by flashing the LEDs white a number of times
-  //set cathodes LOW & anodes HIGH
-  digitalWrite (x, LOW);      
-  digitalWrite (y, LOW);
-  digitalWrite (r, HIGH);
-  digitalWrite (g, HIGH);
-  digitalWrite (b, HIGH);
-  delay (250);
-
-  for (int n = 1; n <= nFlash; n++){
-    //Cathodes HIGH
-    digitalWrite (x, HIGH);
-    digitalWrite (y, HIGH);
-    delay(250);
-    //Cathodes LOW
-    digitalWrite (x, LOW);
-    digitalWrite (y, LOW);
-    delay (250);
-  }
+  //function to use the LED to acknowledge the user's choice in mode
+  //by flashing the LED a number of times
   //set everything LOW
   digitalWrite (x, LOW);
   digitalWrite (y, LOW);
   digitalWrite (r, LOW);
   digitalWrite (g, LOW);
   digitalWrite (b, LOW);
+  digitalWrite (w, LOW);      
+  digitalWrite (v, LOW);      
+  delay (250);
+
+  for (int n = 1; n <= nFlash; n++){
+    //HIGH
+    digitalWrite (w, HIGH);
+    digitalWrite (v, HIGH);
+    delay(250);
+    //LOW
+    digitalWrite (w, LOW);
+    digitalWrite (v, LOW);
+    delay (250);
+  }
 }
 
 void customMix () {
